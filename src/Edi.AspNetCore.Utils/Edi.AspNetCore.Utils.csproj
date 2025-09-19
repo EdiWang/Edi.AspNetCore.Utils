@@ -7,7 +7,7 @@
 		<Company>edi.wang</Company>
 		<PackageTags>Utils</PackageTags>
 		<PackageProjectUrl>https://edi.wang</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/EdiWang/Edi.AspNetCore.ApiKeyAuth</RepositoryUrl>
+		<RepositoryUrl>https://github.com/EdiWang/Edi.AspNetCore.Utils</RepositoryUrl>
 		<Version>1.0.0</Version>
 		<Description>Common ASP.NET Core Helper class for my own projects</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
