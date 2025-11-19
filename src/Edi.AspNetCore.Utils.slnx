@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Edi.AspNetCore.Utils.Tests/Edi.AspNetCore.Utils.Tests.csproj" />
+  <Project Path="Edi.AspNetCore.Utils/Edi.AspNetCore.Utils.csproj" />
+</Solution>
