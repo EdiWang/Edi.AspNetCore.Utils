@@ -74,8 +74,13 @@ public static class SmartXFFHeaderExtensions
         }
         else
         {
+# if NET10_0
+            fho.KnownIPNetworks.Add(new(IPAddress.Any, 0));
+            fho.KnownIPNetworks.Add(new(IPAddress.IPv6Any, 0));
+#else
             fho.KnownNetworks.Add(new(IPAddress.Any, 0));
             fho.KnownNetworks.Add(new(IPAddress.IPv6Any, 0));
+#endif
         }
     }
 
