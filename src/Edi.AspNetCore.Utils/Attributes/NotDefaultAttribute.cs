@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Edi.AspNetCore.Utils;
+namespace Edi.AspNetCore.Utils.Attributes;
 
 public class NotDefaultAttribute : ValidationAttribute
 {

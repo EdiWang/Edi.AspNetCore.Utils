@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Edi.AspNetCore.Utils;
+namespace Edi.AspNetCore.Utils.Attributes;
 
 // https://andrewlock.net/creating-an-empty-guid-validation-attribute/
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
