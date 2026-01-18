@@ -5,7 +5,7 @@ namespace Edi.AspNetCore.Utils;
 /// <summary>
 /// Provides utility methods for detecting runtime environments and parsing environment variables.
 /// </summary>
-public static class EnvironmentHelper
+public static partial class EnvironmentHelper
 {
     /// <summary>
     /// Determines whether the application is running on Azure App Service.
@@ -30,6 +30,9 @@ public static class EnvironmentHelper
     /// which is set to "true" when running in a Docker container.
     /// </remarks>
     public static bool IsRunningInDocker() => Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+    [GeneratedRegex(@"^[a-zA-Z0-9-#@$()\[\]/]+$")]
+    private static partial Regex TagValidationRegex();
 
     /// <summary>
     /// Retrieves and validates environment tags from the specified environment variable.
@@ -72,14 +75,12 @@ public static class EnvironmentHelper
             yield break;
         }
 
-        var tagRegex = new Regex(@"^[a-zA-Z0-9-#@$()\[\]/]+$");
-        var tags = tagsEnv.Split(',');
+        var tags = tagsEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         foreach (string tag in tags)
         {
-            var t = tag.Trim();
-            if (tagRegex.IsMatch(t))
+            if (TagValidationRegex().IsMatch(tag))
             {
-                yield return t;
+                yield return tag;
             }
         }
     }

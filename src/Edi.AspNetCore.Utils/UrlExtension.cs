@@ -59,9 +59,14 @@ public static class UrlExtension
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="url"/> or <paramref name="path"/> is null or whitespace.</exception>
     public static string CombineUrl(this string url, string path)
     {
-        if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(path))
+        if (string.IsNullOrWhiteSpace(url))
         {
-            throw new ArgumentNullException();
+            throw new ArgumentNullException(nameof(url), "URL cannot be null or whitespace.");
+        }
+        
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentNullException(nameof(path), "Path cannot be null or whitespace.");
         }
 
         url = url.Trim();
