@@ -8,7 +8,7 @@
 		<PackageTags>Utils</PackageTags>
 		<PackageProjectUrl>https://edi.wang</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/EdiWang/Edi.AspNetCore.Utils</RepositoryUrl>
-		<Version>1.4.1</Version>
+		<Version>1.5.0</Version>
 		<Description>Common ASP.NET Core Helper class for my own projects</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>edi-logo-blue.png</PackageIcon>
