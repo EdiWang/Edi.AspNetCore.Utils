@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Cryptography;
 
 namespace Edi.AspNetCore.Utils;
 
@@ -81,4 +82,16 @@ public class SecurityHelper
         var x when x[0] is 172 && x[1] is >= 16 and <= 31 => true,
         _ => false
     };
+
+    /// <summary>
+    /// Generates a cryptographically strong random salt encoded as a Base64 string.
+    /// </summary>
+    /// <param name="size">The number of random bytes to generate. Defaults to 16 (128 bits).</param>
+    /// <returns>A Base64-encoded string representation of the generated salt.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="size"/> is less than or equal to zero.</exception>
+    public static string GenerateSalt(int size = 16)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(size);
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(size));
+    }
 }

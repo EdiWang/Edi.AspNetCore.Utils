@@ -240,4 +240,55 @@ public class SecurityHelperTests
     }
 
     #endregion
+
+    #region GenerateSalt Tests
+
+    [Fact]
+    public void GenerateSalt_DefaultSize_ReturnsBase64Of16Bytes()
+    {
+        var result = SecurityHelper.GenerateSalt();
+
+        Assert.Equal(16, Convert.FromBase64String(result).Length);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(16)]
+    [InlineData(32)]
+    [InlineData(64)]
+    public void GenerateSalt_CustomSize_ReturnsBase64OfCorrectByteLength(int size)
+    {
+        var result = SecurityHelper.GenerateSalt(size);
+
+        Assert.Equal(size, Convert.FromBase64String(result).Length);
+    }
+
+    [Fact]
+    public void GenerateSalt_CalledTwice_ReturnsDifferentValues()
+    {
+        var salt1 = SecurityHelper.GenerateSalt();
+        var salt2 = SecurityHelper.GenerateSalt();
+
+        Assert.NotEqual(salt1, salt2);
+    }
+
+    [Fact]
+    public void GenerateSalt_ReturnValue_IsValidBase64String()
+    {
+        var result = SecurityHelper.GenerateSalt();
+
+        var ex = Record.Exception(() => Convert.FromBase64String(result));
+        Assert.Null(ex);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    public void GenerateSalt_WithInvalidSize_ThrowsArgumentOutOfRangeException(int size)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => SecurityHelper.GenerateSalt(size));
+    }
+
+    #endregion
 }
