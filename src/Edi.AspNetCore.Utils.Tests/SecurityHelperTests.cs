@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+
 namespace Edi.AspNetCore.Utils.Tests;
 
 public class SecurityHelperTests
@@ -288,6 +290,125 @@ public class SecurityHelperTests
     public void GenerateSalt_WithInvalidSize_ThrowsArgumentOutOfRangeException(int size)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => SecurityHelper.GenerateSalt(size));
+    }
+
+    #endregion
+
+    #region HashPassword Tests
+
+    [Fact]
+    public void HashPassword_DefaultParameters_ReturnsDeterministicHash()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash1 = SecurityHelper.HashPassword("password", salt);
+        var hash2 = SecurityHelper.HashPassword("password", salt);
+
+        Assert.Equal(hash1, hash2);
+    }
+
+    [Fact]
+    public void HashPassword_DefaultParameters_Returns32ByteHash()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash = SecurityHelper.HashPassword("password", salt);
+
+        Assert.Equal(32, Convert.FromBase64String(hash).Length);
+    }
+
+    [Fact]
+    public void HashPassword_DifferentPasswords_ReturnDifferentHashes()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash1 = SecurityHelper.HashPassword("password1", salt);
+        var hash2 = SecurityHelper.HashPassword("password2", salt);
+
+        Assert.NotEqual(hash1, hash2);
+    }
+
+    [Fact]
+    public void HashPassword_DifferentSalts_ReturnDifferentHashes()
+    {
+        var salt1 = SecurityHelper.GenerateSalt();
+        var salt2 = SecurityHelper.GenerateSalt();
+        var hash1 = SecurityHelper.HashPassword("password", salt1);
+        var hash2 = SecurityHelper.HashPassword("password", salt2);
+
+        Assert.NotEqual(hash1, hash2);
+    }
+
+    [Fact]
+    public void HashPassword_CustomNumBytesRequested_ReturnsCorrectLength()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash = SecurityHelper.HashPassword("password", salt, numBytesRequested: 64);
+
+        Assert.Equal(64, Convert.FromBase64String(hash).Length);
+    }
+
+    [Fact]
+    public void HashPassword_CustomPrf_ReturnsDeterministicHash()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash1 = SecurityHelper.HashPassword("password", salt, prf: KeyDerivationPrf.HMACSHA512);
+        var hash2 = SecurityHelper.HashPassword("password", salt, prf: KeyDerivationPrf.HMACSHA512);
+
+        Assert.Equal(hash1, hash2);
+    }
+
+    [Fact]
+    public void HashPassword_DifferentPrf_ReturnsDifferentHash()
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        var hash256 = SecurityHelper.HashPassword("password", salt, prf: KeyDerivationPrf.HMACSHA256);
+        var hash512 = SecurityHelper.HashPassword("password", salt, prf: KeyDerivationPrf.HMACSHA512);
+
+        Assert.NotEqual(hash256, hash512);
+    }
+
+    [Fact]
+    public void HashPassword_NullPassword_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => SecurityHelper.HashPassword(null, "abc="));
+    }
+
+    [Theory]
+    [InlineData("", "abc=")]
+    [InlineData("   ", "abc=")]
+    public void HashPassword_EmptyOrWhitespacePassword_ThrowsArgumentException(string password, string salt)
+    {
+        Assert.Throws<ArgumentException>(() => SecurityHelper.HashPassword(password, salt));
+    }
+
+    [Fact]
+    public void HashPassword_NullSalt_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => SecurityHelper.HashPassword("password", null));
+    }
+
+    [Theory]
+    [InlineData("password", "")]
+    [InlineData("password", "   ")]
+    public void HashPassword_EmptyOrWhitespaceSalt_ThrowsArgumentException(string password, string salt)
+    {
+        Assert.Throws<ArgumentException>(() => SecurityHelper.HashPassword(password, salt));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void HashPassword_InvalidIterationCount_ThrowsArgumentOutOfRangeException(int iterationCount)
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        Assert.Throws<ArgumentOutOfRangeException>(() => SecurityHelper.HashPassword("password", salt, iterationCount: iterationCount));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void HashPassword_InvalidNumBytesRequested_ThrowsArgumentOutOfRangeException(int numBytes)
+    {
+        var salt = SecurityHelper.GenerateSalt();
+        Assert.Throws<ArgumentOutOfRangeException>(() => SecurityHelper.HashPassword("password", salt, numBytesRequested: numBytes));
     }
 
     #endregion
